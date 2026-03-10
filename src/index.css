@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme {
+  --animate-floating: floating 5s ease-in-out infinite;
+}
+
+@keyframes floating {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@layer base {
+  body {
+    @apply bg-rose-50 text-stone-800 min-h-screen overflow-x-hidden;
+  }
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
