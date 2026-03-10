@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   Instagram, 
   User, 
@@ -16,10 +18,10 @@ import {
   Music,
   Clock,
   Store,
-  MessageCircle
-} from 'lucide-react';
+  MessageCircle,
+} from "lucide-react";
 
-const App = () => {
+export default function Home() {
   // --- 상태 관리 ---
   const [activeTab, setActiveTab] = useState<'guest' | 'admin'>('guest');
   const [isInstagramLinked, setIsInstagramLinked] = useState(false);
@@ -57,7 +59,6 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-[#FFE5E1] text-stone-800 font-sans selection:bg-rose-200 overflow-x-hidden relative">
-
       {/* 부드러운 배경 장식 */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-[-5%] left-[-5%] w-[40%] h-[40%] bg-pink-100/50 blur-[100px] rounded-full" />
@@ -478,6 +479,4 @@ const App = () => {
       </footer>
     </div>
   );
-};
-
-export default App;
+}
