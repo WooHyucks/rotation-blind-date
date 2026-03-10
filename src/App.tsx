@@ -11,13 +11,11 @@ import {
   CheckCircle2,
   Plus,
   X,
-  TrendingUp,
   ChevronRight,
   Heart,
   Music,
   Clock,
   Store,
-  Sparkles,
   MessageCircle
 } from 'lucide-react';
 
