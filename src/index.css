@@ -13,6 +13,19 @@
   body {
     @apply bg-rose-50 text-stone-800 min-h-screen overflow-x-hidden;
   }
+  /* Force 16px to prevent iOS Zoom */
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+}
+
+.animate-spin-slow {
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .scrollbar-hide::-webkit-scrollbar {
@@ -21,4 +34,14 @@
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* iOS Safari GPU Acceleration */
+.gpu-accel {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  perspective: 1000;
 }

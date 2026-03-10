@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Instagram, 
@@ -16,15 +16,23 @@ import {
   Music,
   Clock,
   Store,
-  MessageCircle
+  MessageCircle,
+  Loader2
 } from 'lucide-react';
 
 const App = () => {
   // --- 상태 관리 ---
+  const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'guest' | 'admin'>('guest');
   const [isInstagramLinked, setIsInstagramLinked] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [gender, setGender] = useState<'M' | 'F'>('M');
+
+  useEffect(() => {
+    // 실제 데이터가 없으므로 마운트 후 아주 짧은 지연시간 뒤에 로딩 해제
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   // 이미지 업로드 시뮬레이션
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,6 +54,27 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-[#FFE5E1] text-stone-800 font-sans selection:bg-rose-200 overflow-x-hidden relative">
+      <AnimatePresence>
+        {isLoading && (
+          <motion.div 
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-[#FFE5E1] flex flex-col items-center justify-center gap-6"
+          >
+            <div className="relative">
+              <div className="absolute inset-0 bg-rose-200 blur-3xl opacity-40 animate-pulse" />
+              <div className="relative p-8 bg-white/60 backdrop-blur-xl border border-white rounded-[3rem] shadow-[0_20px_50px_rgba(251,113,133,0.1)]">
+                <Loader2 size={40} className="text-rose-500 animate-spin-slow" />
+              </div>
+            </div>
+            <div className="text-center">
+              <h2 className="text-xl font-black text-stone-900 tracking-tighter mb-1">LOADING</h2>
+              <p className="text-[10px] text-rose-900/40 font-black uppercase tracking-[0.3em]">ROTATION DEMO</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* 부드러운 배경 장식 */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-[-5%] left-[-5%] w-[40%] h-[40%] bg-pink-100/50 blur-[100px] rounded-full" />
@@ -57,7 +86,7 @@ const App = () => {
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="max-w-xl mx-auto bg-white/90 backdrop-blur-xl border border-white rounded-[3rem] p-10 text-center shadow-[0_30px_70px_rgba(251,113,133,0.12)] relative group"
+          className="max-w-xl mx-auto bg-white/90 backdrop-blur-xl border border-white rounded-[3rem] p-10 text-center shadow-[0_30px_70px_rgba(251,113,133,0.12)] relative group gpu-accel"
         >
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-rose-300 to-transparent" />
           <p className="text-stone-800 text-lg sm:text-xl leading-snug font-black tracking-tight mb-8">
@@ -87,7 +116,7 @@ const App = () => {
       </section>
 
       {/* 뷰 전환 탭 (위로 이동) */}
-      <div className="relative z-20 flex justify-center mb-8 px-4">
+      <div className="relative z-20 flex justify-center mb-8 px-4 gpu-accel">
         <div className="w-full max-w-sm bg-white/60 backdrop-blur-md border border-white/50 p-1.5 rounded-[2.5rem] flex gap-1 shadow-[0_10px_30px_rgba(251,113,133,0.05)]">
           <button 
             onClick={() => setActiveTab('guest')}
@@ -131,7 +160,7 @@ const App = () => {
               className="flex justify-center"
             >
               {/* 모바일 화면 프레임 */}
-              <div className="relative w-full max-w-[390px] min-h-[780px] bg-white/80 backdrop-blur-md rounded-[3.5rem] border-[12px] border-white shadow-[0_30px_80px_rgba(251,113,133,0.15)] overflow-hidden flex flex-col">
+              <div className="relative w-full max-w-[390px] min-h-[780px] bg-white/80 backdrop-blur-md rounded-[3.5rem] border-[12px] border-white shadow-[0_30px_80px_rgba(251,113,133,0.15)] overflow-hidden flex flex-col gpu-accel">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 bg-white rounded-b-3xl z-50 shadow-sm flex items-center justify-center" />
                 
                 {/* 모바일 내부 컨텐츠 */}
@@ -159,13 +188,15 @@ const App = () => {
                           <input 
                             type="text" 
                             placeholder="이름 (실명 필수)"
-                            className="w-full bg-white border border-stone-100 px-5 py-4 rounded-2xl focus:border-rose-400 focus:ring-4 focus:ring-rose-400/5 transition-all outline-none text-sm placeholder:text-stone-300 tracking-wide"
+                            className="w-full bg-white border border-stone-100 px-5 py-4 rounded-2xl focus:border-rose-400 focus:ring-4 focus:ring-rose-400/5 transition-all outline-none placeholder:text-stone-300 tracking-wide"
+                            style={{ fontSize: '16px' }}
                           />
                           <div className="grid grid-cols-2 gap-3">
                             <input 
                               type="text" 
                               placeholder="MBTI"
-                              className="w-full bg-white border border-stone-100 px-5 py-4 rounded-2xl focus:border-rose-400 outline-none text-sm text-center font-black uppercase tracking-widest shadow-sm"
+                              className="w-full bg-white border border-stone-100 px-5 py-4 rounded-2xl focus:border-rose-400 outline-none text-center font-black uppercase tracking-widest shadow-sm"
+                              style={{ fontSize: '16px' }}
                             />
                             <div className="flex bg-stone-100/50 rounded-2xl p-1.5 h-[54px] shadow-sm">
                               <button 
@@ -185,7 +216,8 @@ const App = () => {
                         <label className="text-[11px] text-rose-900/60 font-black uppercase tracking-widest ml-1 leading-none">나를 표현하는 한 줄</label>
                         <textarea 
                           placeholder="본인의 매력을 짧게 소개해 주세요."
-                          className="w-full bg-white border border-stone-100 px-5 py-4 rounded-2xl focus:border-rose-400 outline-none text-sm h-28 resize-none leading-relaxed shadow-sm tracking-wide"
+                          className="w-full bg-white border border-stone-100 px-5 py-4 rounded-2xl focus:border-rose-400 outline-none h-28 resize-none leading-relaxed shadow-sm tracking-wide"
+                          style={{ fontSize: '16px' }}
                         />
                       </div>
                     </div>
@@ -201,7 +233,7 @@ const App = () => {
                       <div className="grid grid-cols-4 gap-3">
                         {images.map((img, idx) => (
                           <div key={idx} className="relative aspect-square rounded-2xl overflow-hidden border border-stone-100 shadow-md group">
-                            <img src={img} alt="preview" className="w-full h-full object-cover" />
+                            <img src={img} alt="preview" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                             <button 
                               onClick={() => removeImage(idx)}
                               className="absolute top-1.5 right-1.5 bg-white/90 p-1.5 rounded-full shadow-sm"
@@ -315,7 +347,7 @@ const App = () => {
               <motion.div 
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white/80 backdrop-blur-md border border-white/50 rounded-[3rem] overflow-hidden shadow-[0_20px_60px_rgba(251,113,133,0.1)]"
+                className="bg-white/80 backdrop-blur-md border border-white/50 rounded-[3rem] overflow-hidden shadow-[0_20px_60px_rgba(251,113,133,0.1)] gpu-accel"
               >
                 <div className="px-10 py-8 border-b border-rose-50 flex flex-col sm:flex-row justify-between items-center gap-6">
                   <div className="flex items-center gap-4">
@@ -458,7 +490,7 @@ const App = () => {
       {/* 간소화된 푸터 */}
       <footer className="relative z-20 py-12 flex flex-col items-center">
         <p className="text-stone-400 text-[10px] font-bold tracking-[0.2em] opacity-30">
-          © 2024 ROTATION DATING SYSTEM. ALL RIGHTS RESERVED.
+          © 2026 ROTATION DATING SYSTEM. ALL RIGHTS RESERVED.
         </p>
       </footer>
     </div>
