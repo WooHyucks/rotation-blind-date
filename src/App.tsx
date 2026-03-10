@@ -16,22 +16,25 @@ import {
   Music,
   Clock,
   Store,
-  MessageCircle,
-  Loader2
+  MessageCircle
 } from 'lucide-react';
 
 const App = () => {
   // --- 상태 관리 ---
-  const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'guest' | 'admin'>('guest');
   const [isInstagramLinked, setIsInstagramLinked] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [gender, setGender] = useState<'M' | 'F'>('M');
 
   useEffect(() => {
-    // 실제 데이터가 없으므로 마운트 후 아주 짧은 지연시간 뒤에 로딩 해제
-    const timer = setTimeout(() => setIsLoading(false), 800);
-    return () => clearTimeout(timer);
+    // HTML의 초기 로더를 숨깁시다.
+    const loader = document.getElementById('initial-loader');
+    if (loader) {
+      // 약간의 지연을 주어 React가 준비된 후 서서히 사라지게 함
+      setTimeout(() => {
+        loader.classList.add('loader-hide');
+      }, 500);
+    }
   }, []);
 
   // 이미지 업로드 시뮬레이션
@@ -54,26 +57,6 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-[#FFE5E1] text-stone-800 font-sans selection:bg-rose-200 overflow-x-hidden relative">
-      <AnimatePresence>
-        {isLoading && (
-          <motion.div 
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-[#FFE5E1] flex flex-col items-center justify-center gap-6"
-          >
-            <div className="relative">
-              <div className="absolute inset-0 bg-rose-200 blur-3xl opacity-40 animate-pulse" />
-              <div className="relative p-8 bg-white/60 backdrop-blur-xl border border-white rounded-[3rem] shadow-[0_20px_50px_rgba(251,113,133,0.1)]">
-                <Loader2 size={40} className="text-rose-500 animate-spin-slow" />
-              </div>
-            </div>
-            <div className="text-center">
-              <h2 className="text-xl font-black text-stone-900 tracking-tighter mb-1">LOADING</h2>
-              <p className="text-[10px] text-rose-900/40 font-black uppercase tracking-[0.3em]">ROTATION DEMO</p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* 부드러운 배경 장식 */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
