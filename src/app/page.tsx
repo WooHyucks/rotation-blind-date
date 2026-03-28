@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import * as amplitude from '@amplitude/analytics-browser';
+
 import { 
   Instagram, 
   User, 
@@ -29,6 +31,14 @@ export default function Home() {
   const [gender, setGender] = useState<'M' | 'F'>('M');
 
   useEffect(() => {
+    // Amplitude 초기화
+    amplitude.init('c38ab7ef5ec1b252254c304b37591477', undefined, {
+      defaultTracking: true,
+    });
+    const randomNum = Math.floor(Math.random() * 10000);
+    amplitude.setUserId(`사장님_${randomNum}`);
+    amplitude.track('page_view');
+
     // HTML의 초기 로더를 숨깁시다.
     const loader = document.getElementById('initial-loader');
     if (loader) {
@@ -42,6 +52,7 @@ export default function Home() {
   // 이미지 업로드 시뮬레이션
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && images.length < 4) {
+      amplitude.track('upload_image');
       const file = e.target.files[0];
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -52,6 +63,7 @@ export default function Home() {
   };
 
   const removeImage = (index: number) => {
+    amplitude.track('remove_image');
     setImages(images.filter((_, i) => i !== index));
   };
 
@@ -86,15 +98,16 @@ export default function Home() {
           </div>
 
           <motion.a
-            href="https://open.kakao.com/o/saxefSji"
+            href="https://open.kakao.com/o/smb6TEni"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => amplitude.track('click_open_kakao')}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="inline-flex items-center gap-2.5 px-10 py-4 bg-[#FEE500] text-[#000000] rounded-[2rem] font-black text-sm shadow-[0_10px_25px_rgba(254,229,0,0.2)] hover:bg-[#FDD800] transition-all"
           >
             <MessageCircle size={20} fill="currentColor" />
-            <span>데모 버전 문의하기 (오픈카톡)</span>
+            <span>무료 단체 매출 예약하기 (오픈카톡)</span>
           </motion.a>
         </motion.div>
       </section>
@@ -103,14 +116,20 @@ export default function Home() {
       <div className="relative z-20 flex justify-center mb-8 px-4 gpu-accel">
         <div className="w-full max-w-sm bg-white/60 backdrop-blur-md border border-white/50 p-1.5 rounded-[2.5rem] flex gap-1 shadow-[0_10px_30px_rgba(251,113,133,0.05)]">
           <button 
-            onClick={() => setActiveTab('guest')}
+            onClick={() => {
+              setActiveTab('guest');
+              amplitude.track('click_tab_switch', { tab: 'guest' });
+            }}
             className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-[2rem] transition-all duration-300 ${activeTab === 'guest' ? 'bg-rose-500 text-white shadow-lg font-black' : 'text-stone-400 font-bold hover:text-rose-400'}`}
           >
             <Smartphone size={18} />
             <span className="text-sm tracking-wide">손님용 화면</span>
           </button>
           <button 
-            onClick={() => setActiveTab('admin')}
+            onClick={() => {
+              setActiveTab('admin');
+              amplitude.track('click_tab_switch', { tab: 'admin' });
+            }}
             className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-[2rem] transition-all duration-300 ${activeTab === 'admin' ? 'bg-rose-500 text-white shadow-lg font-black' : 'text-stone-400 font-bold hover:text-rose-400'}`}
           >
             <LayoutDashboard size={18} />
@@ -119,19 +138,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 헤더 섹션 (아래로 이동) - 간략화 */}
-      <header className="relative z-20 px-10 pb-16 flex flex-col items-center">
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-center"
-        >
-          <h1 className="text-4xl font-black tracking-tighter text-stone-900 leading-none">
-            ROTATION <span className="text-rose-500">DEMO</span>
-          </h1>
-          <div className="w-12 h-1 bg-rose-500 mx-auto mt-4 rounded-full opacity-30" />
-        </motion.div>
-      </header>
+
 
       <main className="relative z-20 max-w-6xl mx-auto px-4">
         <AnimatePresence mode="wait">
@@ -184,11 +191,17 @@ export default function Home() {
                             />
                             <div className="flex bg-stone-100/50 rounded-2xl p-1.5 h-[54px] shadow-sm">
                               <button 
-                                onClick={() => setGender('M')}
+                                onClick={() => {
+                                  setGender('M');
+                                  amplitude.track('click_gender_select', { gender: 'M' });
+                                }}
                                 className={`flex-1 flex items-center justify-center text-xs font-black rounded-xl transition-all ${gender === 'M' ? 'bg-white text-blue-500 shadow-sm' : 'text-stone-400'}`}
                               >남성</button>
                               <button 
-                                onClick={() => setGender('F')}
+                                onClick={() => {
+                                  setGender('F');
+                                  amplitude.track('click_gender_select', { gender: 'F' });
+                                }}
                                 className={`flex-1 flex items-center justify-center text-xs font-black rounded-xl transition-all ${gender === 'F' ? 'bg-white text-red-500 shadow-sm' : 'text-stone-400'}`}
                               >여성</button>
                             </div>
@@ -240,7 +253,10 @@ export default function Home() {
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      onClick={() => setIsInstagramLinked(!isInstagramLinked)}
+                      onClick={() => {
+                        setIsInstagramLinked(!isInstagramLinked);
+                        amplitude.track('click_instagram_link', { state: !isInstagramLinked ? 'linked' : 'unlinked' });
+                      }}
                       className={`w-full py-5 rounded-3xl border-2 transition-all duration-500 flex flex-col items-center justify-center gap-2 group relative overflow-hidden ${
                         isInstagramLinked 
                         ? 'bg-white border-transparent shadow-md' 
@@ -268,6 +284,7 @@ export default function Home() {
 
                     {/* 결제 및 신청 버튼 */}
                     <motion.button
+                      onClick={() => amplitude.track('click_submit_application')}
                       disabled={!isFormValid}
                       whileHover={isFormValid ? { scale: 1.02, y: -4 } : {}}
                       whileTap={isFormValid ? { scale: 0.98 } : {}}
