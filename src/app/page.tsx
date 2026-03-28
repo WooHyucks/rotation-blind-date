@@ -107,7 +107,8 @@ export default function Home() {
             className="inline-flex items-center gap-2.5 px-10 py-4 bg-[#FEE500] text-[#000000] rounded-[2rem] font-black text-sm shadow-[0_10px_25px_rgba(254,229,0,0.2)] hover:bg-[#FDD800] transition-all"
           >
             <MessageCircle size={20} fill="currentColor" />
-            <span>무료 단체 매출 예약하기 (오픈카톡)</span>
+            <span>무료 단체 매출 예약하기  
+              <br />(오픈카톡)</span>
           </motion.a>
         </motion.div>
       </section>
